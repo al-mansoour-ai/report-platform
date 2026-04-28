@@ -2,63 +2,178 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>منصة تقرير نزول ميداني</title>
+<title>منصة التقارير الذكية</title>
 <style>
-body { font-family: Arial; direction: rtl; background:#f5f5f5; padding:20px; }
-.container { background:white; padding:20px; border-radius:10px; max-width:700px; margin:auto; }
-input, textarea { width:100%; padding:10px; margin:8px 0; }
-button { padding:10px; background:green; color:white; border:none; width:100%; cursor:pointer; }
-.report { margin-top:20px; background:#eef; padding:15px; border-radius:10px; white-space:pre-line; }
+body { font-family: Arial; direction: rtl; background:#f4f6f8; padding:20px; }
+.container { max-width:700px; margin:auto; background:white; padding:20px; border-radius:12px; }
+h2 { text-align:center; }
+select, input, textarea, button {
+width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #ccc;
+}
+button { background:#0a192f; color:white; font-weight:bold; cursor:pointer; }
+.result { background:#eef; padding:15px; margin-top:15px; border-radius:10px; white-space:pre-line; }
+.small { font-size:12px; color:gray; }
 </style>
 </head>
 <body>
 
 <div class="container">
 
-<h2>🟢 تقرير نزول ميداني</h2>
+<h2>🧠 مولد التقارير الذكية</h2>
 
-<input id="project" placeholder="اسم المشروع">
-<input id="location" placeholder="الموقع">
-<textarea id="observations" placeholder="ماذا لاحظت في الموقع؟"></textarea>
-<textarea id="challenges" placeholder="التحديات"></textarea>
-<textarea id="recommendations" placeholder="التوصيات"></textarea>
+<label>اختر نوع التقرير:</label>
+<select id="type" onchange="changeForm()">
+<option value="">-- اختر --</option>
+<option value="field">نزول ميداني</option>
+<option value="training">تدريب</option>
+<option value="evaluation">تقييم</option>
+<option value="baseline">مسح / خط أساس</option>
+</select>
 
-<button onclick="generateReport()">توليد التقرير</button>
+<div id="formArea"></div>
 
-<div class="report" id="output"></div>
+<button onclick="generatePrompt()">🟢 توليد البرومبت</button>
+
+<div class="result" id="output"></div>
 
 </div>
 
 <script>
-function generateReport() {
 
-let project = document.getElementById("project").value;
-let location = document.getElementById("location").value;
-let obs = document.getElementById("observations").value;
-let chal = document.getElementById("challenges").value;
-let rec = document.getElementById("recommendations").value;
+function changeForm() {
+let type = document.getElementById("type").value;
+let form = document.getElementById("formArea");
 
-let report = `
-📄 تقرير نزول ميداني
-
-اسم المشروع: ${project}
-الموقع: ${location}
-
-📌 الملاحظات:
-${obs}
-
-⚠️ التحديات:
-${chal}
-
-💡 التوصيات:
-${rec}
-
-📊 الخلاصة:
-تم تنفيذ زيارة ميدانية لموقع المشروع في ${location}، وتم رصد مجموعة من الملاحظات والتحديات التي تتطلب متابعة وتحسين لضمان سير التنفيذ بشكل أفضل.
+if(type === "field") {
+form.innerHTML = `
+<input id="project" placeholder="اسم المشروع">
+<input id="location" placeholder="الموقع">
+<textarea id="obs" placeholder="الملاحظات الميدانية"></textarea>
+<textarea id="challenges" placeholder="التحديات"></textarea>
+<textarea id="reco" placeholder="التوصيات"></textarea>
+<p class="small">💡 مثال: تأخر في التنفيذ / نقص مواد / تحسين التنسيق</p>
 `;
-
-document.getElementById("output").innerText = report;
 }
+
+else if(type === "training") {
+form.innerHTML = `
+<input id="project" placeholder="اسم التدريب">
+<input id="location" placeholder="المكان">
+<textarea id="obs" placeholder="ماذا تعلم المشاركون؟"></textarea>
+<textarea id="challenges" placeholder="المشاكل أثناء التدريب"></textarea>
+<textarea id="reco" placeholder="تحسينات مقترحة"></textarea>
+<p class="small">💡 مثال: تحسن المهارات / ضعف التفاعل</p>
+`;
+}
+
+else if(type === "evaluation") {
+form.innerHTML = `
+<input id="project" placeholder="اسم المشروع">
+<textarea id="obs" placeholder="النتائج العامة"></textarea>
+<textarea id="challenges" placeholder="التحديات"></textarea>
+<textarea id="reco" placeholder="التوصيات"></textarea>
+`;
+}
+
+else if(type === "baseline") {
+form.innerHTML = `
+<input id="project" placeholder="اسم الدراسة">
+<textarea id="obs" placeholder="البيانات قبل التنفيذ"></textarea>
+<textarea id="reco" placeholder="التحليل المتوقع"></textarea>
+`;
+}
+}
+
+function generatePrompt() {
+
+let type = document.getElementById("type").value;
+
+let project = document.getElementById("project")?.value || "";
+let location = document.getElementById("location")?.value || "";
+let obs = document.getElementById("obs")?.value || "";
+let challenges = document.getElementById("challenges")?.value || "";
+let reco = document.getElementById("reco")?.value || "";
+
+let prompt = "";
+
+if(type === "field") {
+prompt = `
+أنت خبير تقارير ميدانية في المنظمات الدولية (M&E).
+
+اكتب تقرير نزول ميداني احترافي.
+
+المعلومات:
+- المشروع: ${project}
+- الموقع: ${location}
+- الملاحظات: ${obs}
+- التحديات: ${challenges}
+- التوصيات: ${reco}
+
+التعليمات:
+- استخدم أسلوب تقارير الأمم المتحدة
+- قسم التقرير إلى: سياق، نتائج، تحليل، توصيات
+- لا تستخدم لغة عامة
+`;
+}
+
+else if(type === "training") {
+prompt = `
+أنت خبير تقييم تدريب وفق نموذج Kirkpatrick.
+
+اكتب تقرير تقييم تدريب احترافي.
+
+المعلومات:
+- التدريب: ${project}
+- المكان: ${location}
+- المخرجات: ${obs}
+- التحديات: ${challenges}
+- التحسينات: ${reco}
+
+التعليمات:
+- تحليل التعلم والسلوك والأثر
+- كتابة تقرير رسمي احترافي
+`;
+}
+
+else if(type === "evaluation") {
+prompt = `
+أنت خبير تقييم مشاريع وفق OECD DAC.
+
+اكتب تقرير تقييم مشروع احترافي.
+
+المعلومات:
+- المشروع: ${project}
+- النتائج: ${obs}
+- التحديات: ${challenges}
+- التوصيات: ${reco}
+
+التعليمات:
+- تحليل الفعالية والأثر والاستدامة
+`;
+}
+
+else if(type === "baseline") {
+prompt = `
+أنت خبير تحليل بيانات خط الأساس.
+
+اكتب تقرير خط أساس احترافي.
+
+المعلومات:
+- الدراسة: ${project}
+- البيانات: ${obs}
+- التحليل: ${reco}
+
+التعليمات:
+- تحليل الوضع قبل التدخل
+- صياغة علمية دقيقة
+`;
+}
+
+document.getElementById("output").innerText = prompt;
+
+navigator.clipboard.writeText(prompt);
+}
+
 </script>
 
 </body>
