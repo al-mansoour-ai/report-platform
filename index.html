@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>منصة تقرير نزول ميداني</title>
+<style>
+body { font-family: Arial; direction: rtl; background:#f5f5f5; padding:20px; }
+.container { background:white; padding:20px; border-radius:10px; max-width:700px; margin:auto; }
+input, textarea { width:100%; padding:10px; margin:8px 0; }
+button { padding:10px; background:green; color:white; border:none; width:100%; cursor:pointer; }
+.report { margin-top:20px; background:#eef; padding:15px; border-radius:10px; white-space:pre-line; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h2>🟢 تقرير نزول ميداني</h2>
+
+<input id="project" placeholder="اسم المشروع">
+<input id="location" placeholder="الموقع">
+<textarea id="observations" placeholder="ماذا لاحظت في الموقع؟"></textarea>
+<textarea id="challenges" placeholder="التحديات"></textarea>
+<textarea id="recommendations" placeholder="التوصيات"></textarea>
+
+<button onclick="generateReport()">توليد التقرير</button>
+
+<div class="report" id="output"></div>
+
+</div>
+
+<script>
+function generateReport() {
+
+let project = document.getElementById("project").value;
+let location = document.getElementById("location").value;
+let obs = document.getElementById("observations").value;
+let chal = document.getElementById("challenges").value;
+let rec = document.getElementById("recommendations").value;
+
+let report = `
+📄 تقرير نزول ميداني
+
+اسم المشروع: ${project}
+الموقع: ${location}
+
+📌 الملاحظات:
+${obs}
+
+⚠️ التحديات:
+${chal}
+
+💡 التوصيات:
+${rec}
+
+📊 الخلاصة:
+تم تنفيذ زيارة ميدانية لموقع المشروع في ${location}، وتم رصد مجموعة من الملاحظات والتحديات التي تتطلب متابعة وتحسين لضمان سير التنفيذ بشكل أفضل.
+`;
+
+document.getElementById("output").innerText = report;
+}
+</script>
+
+</body>
+</html>
