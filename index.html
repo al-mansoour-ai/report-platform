@@ -11,7 +11,7 @@ body{
 margin:0;
 font-family:Arial;
 direction:rtl;
-background:linear-gradient(135deg,#020617,#0f172a);
+background:#0f172a;
 color:white;
 }
 
@@ -21,113 +21,42 @@ margin:auto;
 padding:20px;
 }
 
-/* HEADER */
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:30px;
+h1{text-align:center}
+
+/* box */
+.box{
+background:#111827;
+padding:15px;
+border-radius:12px;
+margin-top:15px;
 }
 
-.logo{
-font-weight:bold;
-font-size:20px;
-}
-
-.header button{
-padding:8px 12px;
-border:none;
+input, textarea, select{
+width:100%;
+padding:10px;
+margin-top:8px;
 border-radius:8px;
-cursor:pointer;
-}
-
-.vip{
-background:gold;
-color:black;
-}
-
-/* HERO */
-.hero{
-text-align:center;
-margin-bottom:40px;
-}
-
-.hero h1{
-font-size:28px;
-margin-bottom:10px;
-}
-
-textarea{
-width:100%;
-height:120px;
-padding:15px;
-border-radius:12px;
 border:none;
-margin-top:15px;
-font-size:14px;
 }
 
-.main-btn{
+button{
 width:100%;
-padding:15px;
+padding:12px;
 margin-top:15px;
 border:none;
-border-radius:12px;
+border-radius:10px;
 background:#2563eb;
 color:white;
-font-size:16px;
 font-weight:bold;
 cursor:pointer;
 }
 
-/* STEPS */
-.steps{
-display:flex;
-justify-content:space-between;
-margin:30px 0;
-gap:10px;
-}
-
-.step{
-background:#111827;
-padding:10px;
-border-radius:10px;
-flex:1;
-text-align:center;
-font-size:12px;
-}
-
-/* PRICING */
-.pricing{
-display:flex;
-gap:10px;
-margin-top:30px;
-}
-
-.card{
-background:#111827;
-padding:15px;
-border-radius:12px;
-flex:1;
-text-align:center;
-}
-
-.pro{
-border:2px solid gold;
-}
-
-/* QUESTIONS */
-#questions{
-margin-top:20px;
-}
-
-/* RESULT */
 #result{
-margin-top:20px;
+display:none;
 background:#020617;
 padding:15px;
-border-radius:12px;
-display:none;
+border-radius:10px;
+margin-top:20px;
 }
 
 pre{
@@ -137,21 +66,7 @@ direction:ltr;
 }
 
 .copy{
-margin-top:10px;
-width:100%;
-padding:10px;
 background:#22c55e;
-border:none;
-border-radius:10px;
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
-
-.instructions{
-font-size:12px;
-color:#ccc;
-margin-top:10px;
 }
 </style>
 </head>
@@ -160,91 +75,127 @@ margin-top:10px;
 
 <div class="container">
 
-<!-- HEADER -->
-<div class="header">
-<div class="logo">🏛️ AI Report</div>
-<div>
-<button>دخول</button>
-<button class="vip">ترقية</button>
-</div>
+<h1>🏛️ AI Report Studio</h1>
+
+<!-- اختيار نوع التقرير -->
+<div class="box">
+<h3>📊 نوع التقرير</h3>
+<select id="type">
+<option>تقرير ميداني</option>
+<option>تقرير تقييم</option>
+<option>تقرير تدريبي</option>
+<option>تقرير إنساني</option>
+</select>
 </div>
 
-<!-- HERO -->
-<div class="hero">
-<h1>منصة التقارير الذكية</h1>
-<p>حوّل وصفك إلى تقرير احترافي خلال ثواني</p>
+<!-- البيانات الأساسية -->
+<div class="box">
+<h3>📁 البيانات الأساسية</h3>
 
-<textarea id="input" placeholder="مثال: زيارة مشروع مياه في عدن"></textarea>
+<label>اسم المشروع</label>
+<input id="project">
 
-<button class="main-btn" onclick="start()">🚀 ابدأ</button>
-</div>
+<label>الجهة المنفذة</label>
+<input id="org">
 
-<!-- STEPS -->
-<div class="steps">
-<div class="step">1. وصف</div>
-<div class="step">2. إجابة</div>
-<div class="step">3. نسخ</div>
-<div class="step">4. تقرير</div>
-</div>
+<label>التاريخ</label>
+<input id="date">
 
-<!-- PRICING -->
-<div class="pricing">
-<div class="card">
-<h4>تجربة</h4>
-<p>$0</p>
-</div>
-<div class="card pro">
-<h4>احترافي</h4>
-<p>$19</p>
-</div>
-<div class="card">
-<h4>مؤسسي</h4>
-<p>$49</p>
-</div>
+<label>عدد المستفيدين</label>
+<input id="beneficiaries">
 </div>
 
-<!-- QUESTIONS -->
+<!-- وصف -->
+<div class="box">
+<h3>📝 وصف النشاط</h3>
+<p style="font-size:12px;color:#aaa">مثال: زيارة ميدانية لمشروع مياه في عدن لتقييم الأداء</p>
+<textarea id="desc"></textarea>
+</div>
+
+<button onclick="showQuestions()">التالي</button>
+
+<!-- الأسئلة -->
 <div id="questions"></div>
 
-<!-- RESULT -->
+<!-- النتيجة -->
 <div id="result">
 <pre id="output"></pre>
-<button class="copy" onclick="copy()">📋 نسخ البرومبت</button>
+<button class="copy" onclick="copy()">📋 نسخ</button>
 
-<div class="instructions">
-انسخ → افتح ChatGPT → الصق → احصل على تقرير كامل
-</div>
+<p style="font-size:12px;color:#ccc">
+انسخ البرومبت ثم الصقه في ChatGPT للحصول على التقرير
+</p>
 </div>
 
 </div>
 
 <script>
-function start(){
+
+function showQuestions(){
 document.getElementById("questions").innerHTML = `
+<div class="box">
+
+<h3>🧠 التحليل</h3>
+
 <p>📍 الموقع</p>
-<input id="q1" placeholder="مثال: عدن">
+<small>مثال: عدن - خور مكسر</small>
+<input id="q1">
 
 <p>🎯 الهدف</p>
-<input id="q2" placeholder="مثال: تقييم جودة المشروع">
+<small>مثال: تقييم جودة التنفيذ</small>
+<input id="q2">
 
 <p>📝 الملاحظات</p>
-<textarea id="q3" placeholder="مثال: تحسن الأداء"></textarea>
+<small>مثال: تحسن الأداء لكن يوجد نقص في الموارد</small>
+<textarea id="q3"></textarea>
 
-<button class="main-btn" onclick="generate()">توليد البرومبت</button>
+<p>⚠️ التحديات</p>
+<textarea id="q4"></textarea>
+
+<p>💡 التوصيات</p>
+<textarea id="q5"></textarea>
+
+<button onclick="generate()">🚀 توليد البرومبت</button>
+
+</div>
 `;
 }
 
 function generate(){
-let text = document.getElementById("input").value;
+
+let type = document.getElementById("type").value;
+let project = document.getElementById("project").value;
+let org = document.getElementById("org").value;
+let date = document.getElementById("date").value;
+let ben = document.getElementById("beneficiaries").value;
+let desc = document.getElementById("desc").value;
+
 let q1 = document.getElementById("q1").value;
 let q2 = document.getElementById("q2").value;
 let q3 = document.getElementById("q3").value;
+let q4 = document.getElementById("q4").value;
+let q5 = document.getElementById("q5").value;
 
 let prompt = `
-### ACT AS STRATEGIC EXPERT
+### ACT AS PROFESSIONAL REPORT WRITER
 
-INPUT:
-${text}
+REPORT TYPE:
+${type}
+
+PROJECT:
+${project}
+
+ORGANIZATION:
+${org}
+
+DATE:
+${date}
+
+BENEFICIARIES:
+${ben}
+
+DESCRIPTION:
+${desc}
 
 LOCATION:
 ${q1}
@@ -255,16 +206,21 @@ ${q2}
 OBSERVATIONS:
 ${q3}
 
+CHALLENGES:
+${q4}
+
+RECOMMENDATIONS:
+${q5}
+
 OUTPUT:
-Generate a full professional report:
+Generate a full professional report in formal Arabic including:
 - Executive Summary
-- Objectives
+- Background
+- Methodology
 - Findings
-- Risks
+- Challenges
 - Recommendations
 - Conclusion
-
-Write in formal Arabic.
 `;
 
 document.getElementById("output").innerText = prompt;
@@ -275,6 +231,7 @@ function copy(){
 navigator.clipboard.writeText(document.getElementById("output").innerText);
 alert("تم النسخ");
 }
+
 </script>
 
 </body>
