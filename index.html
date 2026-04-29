@@ -1,213 +1,282 @@
+```html
 <!DOCTYPE html>
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>منصة التقارير الذكية</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Report Studio</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
 direction:rtl;
-background:linear-gradient(135deg,#0f172a,#1e293b);
+background:linear-gradient(135deg,#020617,#0f172a);
 color:white;
 }
 
 .container{
-max-width:850px;
-margin:40px auto;
-background:white;
-color:#111;
-border-radius:20px;
-padding:30px;
-box-shadow:0 20px 50px rgba(0,0,0,0.3);
+max-width:900px;
+margin:auto;
+padding:20px;
 }
 
-h2{
+/* HEADER */
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.logo{
+font-weight:bold;
+font-size:20px;
+}
+
+.header button{
+padding:8px 12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.vip{
+background:gold;
+color:black;
+}
+
+/* HERO */
+.hero{
 text-align:center;
-color:#0f172a;
-margin-bottom:20px;
+margin-bottom:40px;
 }
 
-select, input, textarea{
-width:100%;
-padding:14px;
-margin:10px 0;
-border-radius:10px;
-border:1px solid #ddd;
-font-size:14px;
+.hero h1{
+font-size:28px;
+margin-bottom:10px;
 }
 
 textarea{
-min-height:80px;
+width:100%;
+height:120px;
+padding:15px;
+border-radius:12px;
+border:none;
+margin-top:15px;
+font-size:14px;
 }
 
-button{
+.main-btn{
 width:100%;
 padding:15px;
-background:linear-gradient(90deg,#0f172a,#2563eb);
-color:white;
+margin-top:15px;
 border:none;
 border-radius:12px;
+background:#2563eb;
+color:white;
 font-size:16px;
 font-weight:bold;
 cursor:pointer;
-transition:0.3s;
 }
 
-button:hover{
-transform:scale(1.02);
-}
-
-.card{
-background:#f8fafc;
-padding:15px;
-border-radius:12px;
-margin-top:15px;
-border-right:5px solid #2563eb;
+/* STEPS */
+.steps{
+display:flex;
+justify-content:space-between;
+margin:30px 0;
+gap:10px;
 }
 
 .step{
-background:#eef2ff;
+background:#111827;
 padding:10px;
 border-radius:10px;
-margin-bottom:10px;
-font-size:13px;
+flex:1;
+text-align:center;
+font-size:12px;
 }
 
-.result{
-white-space:pre-line;
-background:#0f172a;
-color:#e2e8f0;
+/* PRICING */
+.pricing{
+display:flex;
+gap:10px;
+margin-top:30px;
+}
+
+.card{
+background:#111827;
 padding:15px;
 border-radius:12px;
-margin-top:15px;
-font-size:13px;
+flex:1;
+text-align:center;
 }
 
-.small{
+.pro{
+border:2px solid gold;
+}
+
+/* QUESTIONS */
+#questions{
+margin-top:20px;
+}
+
+/* RESULT */
+#result{
+margin-top:20px;
+background:#020617;
+padding:15px;
+border-radius:12px;
+display:none;
+}
+
+pre{
+white-space:pre-wrap;
+color:#38bdf8;
+direction:ltr;
+}
+
+.copy{
+margin-top:10px;
+width:100%;
+padding:10px;
+background:#22c55e;
+border:none;
+border-radius:10px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+.instructions{
 font-size:12px;
-color:#64748b;
+color:#ccc;
+margin-top:10px;
 }
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
 
-<h2>🧠 منصة التقارير الذكية</h2>
+<!-- HEADER -->
+<div class="header">
+<div class="logo">🏛️ AI Report</div>
+<div>
+<button>دخول</button>
+<button class="vip">ترقية</button>
+</div>
+</div>
 
-<div class="step">1️⃣ اختر نوع التقرير</div>
+<!-- HERO -->
+<div class="hero">
+<h1>منصة التقارير الذكية</h1>
+<p>حوّل وصفك إلى تقرير احترافي خلال ثواني</p>
 
-<select id="type" onchange="changeForm()">
-<option value="">اختر نوع التقرير</option>
-<option value="field">نزول ميداني</option>
-<option value="training">تدريب</option>
-<option value="evaluation">تقييم مشروع</option>
-<option value="baseline">خط أساس</option>
-</select>
+<textarea id="input" placeholder="مثال: زيارة مشروع مياه في عدن"></textarea>
 
-<div id="formArea"></div>
+<button class="main-btn" onclick="start()">🚀 ابدأ</button>
+</div>
 
-<button onclick="generatePrompt()">🚀 توليد البرومبت</button>
+<!-- STEPS -->
+<div class="steps">
+<div class="step">1. وصف</div>
+<div class="step">2. إجابة</div>
+<div class="step">3. نسخ</div>
+<div class="step">4. تقرير</div>
+</div>
 
-<div class="result" id="output"></div>
+<!-- PRICING -->
+<div class="pricing">
+<div class="card">
+<h4>تجربة</h4>
+<p>$0</p>
+</div>
+<div class="card pro">
+<h4>احترافي</h4>
+<p>$19</p>
+</div>
+<div class="card">
+<h4>مؤسسي</h4>
+<p>$49</p>
+</div>
+</div>
+
+<!-- QUESTIONS -->
+<div id="questions"></div>
+
+<!-- RESULT -->
+<div id="result">
+<pre id="output"></pre>
+<button class="copy" onclick="copy()">📋 نسخ البرومبت</button>
+
+<div class="instructions">
+انسخ → افتح ChatGPT → الصق → احصل على تقرير كامل
+</div>
+</div>
 
 </div>
 
 <script>
+function start(){
+document.getElementById("questions").innerHTML = `
+<p>📍 الموقع</p>
+<input id="q1" placeholder="مثال: عدن">
 
-function changeForm(){
-let type=document.getElementById("type").value;
-let f=document.getElementById("formArea");
+<p>🎯 الهدف</p>
+<input id="q2" placeholder="مثال: تقييم جودة المشروع">
 
-if(type==="field"){
-f.innerHTML=`
-<div class="card">📍 بيانات المشروع</div>
-<input id="project" placeholder="اسم المشروع">
-<input id="location" placeholder="الموقع">
+<p>📝 الملاحظات</p>
+<textarea id="q3" placeholder="مثال: تحسن الأداء"></textarea>
 
-<div class="card">📝 الملاحظات</div>
-<textarea id="obs" placeholder="ما الذي لاحظته؟"></textarea>
-
-<div class="card">⚠️ التحديات</div>
-<textarea id="challenges"></textarea>
-
-<div class="card">💡 التوصيات</div>
-<textarea id="reco"></textarea>
+<button class="main-btn" onclick="generate()">توليد البرومبت</button>
 `;
 }
 
-else if(type==="training"){
-f.innerHTML=`
-<div class="card">🎓 التدريب</div>
-<input id="project" placeholder="اسم التدريب">
-<input id="location" placeholder="المكان">
+function generate(){
+let text = document.getElementById("input").value;
+let q1 = document.getElementById("q1").value;
+let q2 = document.getElementById("q2").value;
+let q3 = document.getElementById("q3").value;
 
-<div class="card">📊 النتائج</div>
-<textarea id="obs"></textarea>
+let prompt = `
+### ACT AS STRATEGIC EXPERT
 
-<div class="card">⚠️ التحديات</div>
-<textarea id="challenges"></textarea>
+INPUT:
+${text}
 
-<div class="card">💡 التحسينات</div>
-<textarea id="reco"></textarea>
+LOCATION:
+${q1}
+
+OBJECTIVE:
+${q2}
+
+OBSERVATIONS:
+${q3}
+
+OUTPUT:
+Generate a full professional report:
+- Executive Summary
+- Objectives
+- Findings
+- Risks
+- Recommendations
+- Conclusion
+
+Write in formal Arabic.
 `;
+
+document.getElementById("output").innerText = prompt;
+document.getElementById("result").style.display="block";
 }
 
-else if(type==="evaluation"){
-f.innerHTML=`
-<div class="card">📈 التقييم</div>
-<input id="project" placeholder="اسم المشروع">
-
-<textarea id="obs" placeholder="النتائج"></textarea>
-<textarea id="challenges"></textarea>
-<textarea id="reco"></textarea>
-`;
+function copy(){
+navigator.clipboard.writeText(document.getElementById("output").innerText);
+alert("تم النسخ");
 }
-
-else if(type==="baseline"){
-f.innerHTML=`
-<div class="card">📍 خط الأساس</div>
-<input id="project">
-
-<textarea id="obs"></textarea>
-<textarea id="reco"></textarea>
-`;
-}
-}
-
-function generatePrompt(){
-
-let type=document.getElementById("type").value;
-
-let project=document.getElementById("project")?.value||"";
-let location=document.getElementById("location")?.value||"";
-let obs=document.getElementById("obs")?.value||"";
-let ch=document.getElementById("challenges")?.value||"";
-let reco=document.getElementById("reco")?.value||"";
-
-let prompt=`أنت خبير تقارير في المنظمات الدولية.
-
-اكتب تقرير احترافي وفق معايير M&E.
-
-البيانات:
-- المشروع: ${project}
-- الموقع: ${location}
-- الملاحظات: ${obs}
-- التحديات: ${ch}
-- التوصيات: ${reco}
-
-اكتب تقرير رسمي مقسم ومنظم.`;
-
-document.getElementById("output").innerText=prompt;
-
-navigator.clipboard.writeText(prompt);
-}
-
 </script>
 
 </body>
 </html>
+```
