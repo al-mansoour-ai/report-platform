@@ -6,57 +6,63 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Report Studio</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
 <style>
-body{
-margin:0;
-font-family:Arial;
-direction:rtl;
-background:#0f172a;
+:root{
+--bg:#0B0F19;
+--card:#111827;
+--primary:#4F46E5;
+--text:#E5E7EB;
+--muted:#9CA3AF;
+--ok:#22c55e;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direction:rtl}
+.container{max-width:900px;margin:auto;padding:20px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.logo{font-weight:900}
+
+.progress{height:6px;background:#1f2937;border-radius:10px;overflow:hidden;margin-bottom:20px}
+.bar{height:100%;width:25%;background:var(--primary);transition:.3s}
+
+.step{display:none}
+.step.active{display:block}
+
+.card{background:var(--card);padding:20px;border-radius:14px;margin-bottom:15px}
+
+input,textarea,select{
+width:100%;
+padding:12px;
+margin-top:8px;
+border-radius:10px;
+border:none;
+background:#020617;
 color:white;
 }
 
-.container{
-max-width:900px;
-margin:auto;
-padding:20px;
-}
-
-h1{text-align:center}
-
-/* box */
-.box{
-background:#111827;
-padding:15px;
-border-radius:12px;
-margin-top:15px;
-}
-
-input, textarea, select{
-width:100%;
-padding:10px;
-margin-top:8px;
-border-radius:8px;
-border:none;
-}
+small{color:var(--muted)}
 
 button{
 width:100%;
-padding:12px;
+padding:14px;
 margin-top:15px;
 border:none;
-border-radius:10px;
-background:#2563eb;
+border-radius:12px;
+background:var(--primary);
 color:white;
 font-weight:bold;
 cursor:pointer;
 }
 
+.nav{display:flex;gap:10px}
+.nav button{flex:1}
+
 #result{
-display:none;
 background:#020617;
 padding:15px;
-border-radius:10px;
-margin-top:20px;
+border-radius:12px;
+display:none;
 }
 
 pre{
@@ -65,8 +71,26 @@ color:#38bdf8;
 direction:ltr;
 }
 
-.copy{
-background:#22c55e;
+.copy{background:var(--ok)}
+
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:rgba(0,0,0,0.8);
+align-items:center;
+justify-content:center;
+}
+
+.modal-box{
+background:#111827;
+padding:20px;
+border-radius:12px;
+width:90%;
+max-width:400px;
 }
 </style>
 </head>
@@ -75,157 +99,250 @@ background:#22c55e;
 
 <div class="container">
 
-<h1>🏛️ AI Report Studio</h1>
-
-<!-- اختيار نوع التقرير -->
-<div class="box">
-<h3>📊 نوع التقرير</h3>
-<select id="type">
-<option>تقرير ميداني</option>
-<option>تقرير تقييم</option>
-<option>تقرير تدريبي</option>
-<option>تقرير إنساني</option>
-</select>
+<div class="header">
+<div class="logo">🏛️ AI Report Studio</div>
+<button onclick="openCode()">🔑 كود</button>
 </div>
 
-<!-- البيانات الأساسية -->
-<div class="box">
+<div class="progress"><div id="bar" class="bar"></div></div>
+
+<!-- STEP 1 -->
+<div id="step1" class="step active">
+<div class="card">
+
+<h3>📊 نوع التقرير</h3>
+
+<select id="type">
+<option>تقييم مشروع (OECD)</option>
+<option>زيارة ميدانية</option>
+<option>تقرير أثر</option>
+<option>تقرير تدريبي</option>
+</select>
+
+<p>🧠 وصف (اختياري)</p>
+<textarea id="smartDesc" placeholder="مثال: زيارة ميدانية لتقييم مشروع"></textarea>
+
+<button onclick="suggestType()">✨ اقتراح النوع</button>
+
+</div>
+
+<div class="nav">
+<button onclick="next(2)">التالي</button>
+</div>
+</div>
+
+<!-- STEP 2 -->
+<div id="step2" class="step">
+<div class="card">
+
 <h3>📁 البيانات الأساسية</h3>
 
-<label>اسم المشروع</label>
-<input id="project">
+<input id="project" placeholder="اسم المشروع">
+<input id="org" placeholder="الجهة">
+<input id="donor" placeholder="الممول">
+<input id="location" placeholder="الموقع">
+<input id="date" placeholder="التاريخ">
+<input id="beneficiaries" placeholder="عدد المستفيدين">
 
-<label>الجهة المنفذة</label>
-<input id="org">
-
-<label>التاريخ</label>
-<input id="date">
-
-<label>عدد المستفيدين</label>
-<input id="beneficiaries">
 </div>
 
-<!-- وصف -->
-<div class="box">
-<h3>📝 وصف النشاط</h3>
-<p style="font-size:12px;color:#aaa">مثال: زيارة ميدانية لمشروع مياه في عدن لتقييم الأداء</p>
-<textarea id="desc"></textarea>
+<div class="nav">
+<button onclick="next(1)">رجوع</button>
+<button onclick="next(3)">التالي</button>
+</div>
 </div>
 
-<button onclick="showQuestions()">التالي</button>
+<!-- STEP 3 -->
+<div id="step3" class="step">
+<div class="card">
 
-<!-- الأسئلة -->
-<div id="questions"></div>
+<h3>🧠 التحليل</h3>
 
-<!-- النتيجة -->
+<div id="dynamicQuestions"></div>
+
+</div>
+
+<div class="nav">
+<button onclick="next(2)">رجوع</button>
+<button onclick="generate()">🚀 توليد</button>
+</div>
+</div>
+
+<!-- RESULT -->
 <div id="result">
 <pre id="output"></pre>
 <button class="copy" onclick="copy()">📋 نسخ</button>
-
-<p style="font-size:12px;color:#ccc">
-انسخ البرومبت ثم الصقه في ChatGPT للحصول على التقرير
-</p>
 </div>
 
+</div>
+
+<!-- MODAL -->
+<div id="codeBox" class="modal">
+<div class="modal-box">
+
+<h3>🔑 كود التفعيل</h3>
+
+<input id="codeInput">
+
+<button onclick="checkCode()">تفعيل</button>
+<button onclick="closeCode()">إغلاق</button>
+
+</div>
 </div>
 
 <script>
 
-function showQuestions(){
-document.getElementById("questions").innerHTML = `
-<div class="box">
+// التنقل
+function next(step){
+document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
+document.getElementById("step"+step).classList.add("active");
+document.getElementById("bar").style.width = (step*33)+"%";
 
-<h3>🧠 التحليل</h3>
+if(step === 3){
+loadQuestions();
+}
 
-<p>📍 الموقع</p>
-<small>مثال: عدن - خور مكسر</small>
-<input id="q1">
+window.scrollTo({top:0,behavior:"smooth"});
+}
 
-<p>🎯 الهدف</p>
-<small>مثال: تقييم جودة التنفيذ</small>
-<input id="q2">
+// اقتراح النوع
+function suggestType(){
+let t = document.getElementById("smartDesc").value;
 
-<p>📝 الملاحظات</p>
-<small>مثال: تحسن الأداء لكن يوجد نقص في الموارد</small>
-<textarea id="q3"></textarea>
+if(t.includes("تقييم")) set("type","تقييم مشروع (OECD)");
+else if(t.includes("زيارة")) set("type","زيارة ميدانية");
+else if(t.includes("تدريب")) set("type","تقرير تدريبي");
+}
 
-<p>⚠️ التحديات</p>
-<textarea id="q4"></textarea>
+// الأسئلة الذكية
+function loadQuestions(){
 
-<p>💡 التوصيات</p>
-<textarea id="q5"></textarea>
+let type = val("type");
+let html = "";
 
-<button onclick="generate()">🚀 توليد البرومبت</button>
-
-</div>
+if(type.includes("تقييم")){
+html = `
+<textarea id="objective" placeholder="تحقيق الأهداف"></textarea>
+<textarea id="findings" placeholder="النتائج"></textarea>
+<textarea id="challenges" placeholder="التحديات"></textarea>
+<textarea id="recommendations" placeholder="التوصيات"></textarea>
 `;
 }
 
+else if(type.includes("ميدانية")){
+html = `
+<textarea id="objective" placeholder="حالة التنفيذ"></textarea>
+<textarea id="findings" placeholder="ما شاهدت"></textarea>
+<textarea id="challenges" placeholder="المشاكل"></textarea>
+<textarea id="recommendations" placeholder="اقتراحات"></textarea>
+`;
+}
+
+else{
+html = `
+<textarea id="objective" placeholder="الهدف"></textarea>
+<textarea id="findings" placeholder="الأثر"></textarea>
+<textarea id="challenges" placeholder="التحديات"></textarea>
+<textarea id="recommendations" placeholder="التوصيات"></textarea>
+`;
+}
+
+document.getElementById("dynamicQuestions").innerHTML = html;
+}
+
+// القفل + التوليد
 function generate(){
 
-let type = document.getElementById("type").value;
-let project = document.getElementById("project").value;
-let org = document.getElementById("org").value;
-let date = document.getElementById("date").value;
-let ben = document.getElementById("beneficiaries").value;
-let desc = document.getElementById("desc").value;
+let device = localStorage.getItem("dev_id");
+if(!device){
+device = "DEV-" + Math.random().toString(36).substring(2,9);
+localStorage.setItem("dev_id", device);
+}
 
-let q1 = document.getElementById("q1").value;
-let q2 = document.getElementById("q2").value;
-let q3 = document.getElementById("q3").value;
-let q4 = document.getElementById("q4").value;
-let q5 = document.getElementById("q5").value;
+let credits = localStorage.getItem("credits_"+device);
+credits = credits === null ? 1 : parseInt(credits);
 
-let prompt = `
-### ACT AS PROFESSIONAL REPORT WRITER
+if(credits <= 0){
 
-REPORT TYPE:
-${type}
+document.getElementById("result").style.display="block";
 
-PROJECT:
-${project}
+document.getElementById("output").innerHTML = `
+<h2>🚫 انتهى رصيدك</h2>
 
-ORGANIZATION:
-${org}
+<p>🔥 تقارير احترافية جاهزة للمانحين</p>
+<p>💰 باقات تبدأ من 10$</p>
 
-DATE:
-${date}
-
-BENEFICIARIES:
-${ben}
-
-DESCRIPTION:
-${desc}
-
-LOCATION:
-${q1}
-
-OBJECTIVE:
-${q2}
-
-OBSERVATIONS:
-${q3}
-
-CHALLENGES:
-${q4}
-
-RECOMMENDATIONS:
-${q5}
-
-OUTPUT:
-Generate a full professional report in formal Arabic including:
-- Executive Summary
-- Background
-- Methodology
-- Findings
-- Challenges
-- Recommendations
-- Conclusion
+<a href="https://wa.me/967XXXXXXXXX" target="_blank"
+style="display:block;background:#25D366;padding:15px;color:white;border-radius:10px;text-align:center">
+💬 تواصل الآن
+</a>
 `;
 
-document.getElementById("output").innerText = prompt;
+return;
+}
+
+credits--;
+localStorage.setItem("credits_"+device, credits);
+
+let p = `
+You are a Senior Monitoring & Evaluation Consultant.
+
+Write a HIGH-LEVEL PROFESSIONAL REPORT in Arabic.
+
+Use OECD + M&E standards.
+
+Project: ${val("project")}
+Organization: ${val("org")}
+Donor: ${val("donor")}
+Location: ${val("location")}
+Date: ${val("date")}
+Beneficiaries: ${val("beneficiaries")}
+
+Objective: ${val("objective")}
+Findings: ${val("findings")}
+Challenges: ${val("challenges")}
+Recommendations: ${val("recommendations")}
+
+Structure:
+Executive Summary
+Background
+Methodology
+Findings
+Challenges
+Recommendations
+Conclusion
+`;
+
+document.getElementById("output").innerText = p;
 document.getElementById("result").style.display="block";
 }
+
+// كود التفعيل
+function openCode(){
+document.getElementById("codeBox").style.display="flex";
+}
+
+function closeCode(){
+document.getElementById("codeBox").style.display="none";
+}
+
+function checkCode(){
+let code = document.getElementById("codeInput").value;
+
+if(code === "VIP50"){
+localStorage.setItem("credits_"+localStorage.getItem("dev_id"), 50);
+alert("تم التفعيل");
+}
+else{
+alert("كود غير صحيح");
+}
+
+closeCode();
+}
+
+// أدوات
+function val(id){return document.getElementById(id).value}
+function set(id,v){document.getElementById(id).value=v}
 
 function copy(){
 navigator.clipboard.writeText(document.getElementById("output").innerText);
