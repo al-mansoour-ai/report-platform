@@ -6,30 +6,142 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Report Pro</title>
 
+<!-- Cairo -->
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
 :root{
---bg:#0F172A;
---card:#1E293B;
---primary:#334155;
---text:#E2E8F0;
+--bg:#0B1220;          /* خلفية داكنة رسمية */
+--card:#111A2E;        /* كرت */
+--line:#1E2A44;        /* حدود خفيفة */
+--primary:#2563EB;     /* أزرق احترافي */
+--primary-2:#1D4ED8;
+--text:#E5E7EB;
 --muted:#94A3B8;
---accent:#22C55E;
+--ok:#16A34A;
+--warn:#F59E0B;
 }
-body{margin:0;font-family:'Cairo';background:var(--bg);color:var(--text);direction:rtl}
-.container{max-width:900px;margin:auto;padding:20px}
-.card{background:var(--card);padding:20px;border-radius:12px;margin-bottom:15px}
-input,textarea,select{width:100%;padding:12px;margin-top:8px;border-radius:8px;border:none;background:#020617;color:white}
-button{width:100%;padding:14px;margin-top:10px;border:none;border-radius:10px;background:var(--primary);color:white;cursor:pointer}
-small{color:var(--muted)}
-.nav{display:flex;gap:10px}
-.nav button{flex:1}
+
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:'Cairo',sans-serif;
+background:linear-gradient(180deg,#0B1220,#0B1220 60%,#0E172A);
+color:var(--text);
+direction:rtl;
+}
+
+.container{max-width:980px;margin:auto;padding:18px}
+.header{
+display:flex;justify-content:space-between;align-items:center;
+margin-bottom:14px
+}
+.brand{font-weight:900;letter-spacing:.3px}
+.badge{
+font-size:12px;background:#0A1A36;border:1px solid var(--line);
+padding:4px 8px;border-radius:999px;color:#93C5FD
+}
+
+.progress{height:6px;background:#0F1A33;border-radius:999px;overflow:hidden;margin:10px 0 16px}
+.bar{height:100%;width:20%;background:linear-gradient(90deg,var(--primary),#60A5FA);transition:.25s}
+
 .step{display:none}
 .step.active{display:block}
-#result{display:none;background:#020617;padding:15px;border-radius:10px}
-pre{white-space:pre-wrap;color:#38bdf8;direction:ltr}
-.copy{background:var(--accent)}
+
+.card{
+background:var(--card);
+border:1px solid var(--line);
+border-radius:14px;
+padding:18px;
+margin-bottom:12px
+}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:720px){.grid-2{grid-template-columns:1fr}}
+
+label{font-weight:700;font-size:14px}
+small{color:var(--muted);display:block;margin-top:4px}
+
+input,textarea,select{
+width:100%;
+margin-top:8px;
+padding:12px 12px;
+border-radius:10px;
+border:1px solid var(--line);
+background:#020617;
+color:#fff;
+outline:none
+}
+
+button{
+width:100%;
+padding:13px;
+margin-top:10px;
+border:none;
+border-radius:12px;
+background:linear-gradient(180deg,var(--primary),var(--primary-2));
+color:#fff;
+font-weight:800;
+cursor:pointer
+}
+
+.nav{display:flex;gap:10px}
+.nav button{flex:1}
+
+.ghost{background:#0F1A33}
+.success{background:linear-gradient(180deg,#16A34A,#15803D)}
+.warn{background:linear-gradient(180deg,#F59E0B,#D97706)}
+
+#result{display:none}
+pre{
+white-space:pre-wrap;
+background:#020617;
+border:1px solid var(--line);
+border-radius:12px;
+padding:14px;
+color:#38BDF8;
+direction:ltr
+}
+
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+.actions button{padding:11px}
+
+.pricing{
+display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px
+}
+@media(max-width:720px){.pricing{grid-template-columns:1fr}}
+
+.plan{
+border:1px solid var(--line);
+border-radius:12px;
+padding:12px;background:#0F1A33
+}
+
+.plan h4{margin:6px 0}
+.plan .price{font-weight:900;font-size:20px}
+
+.center{text-align:center}
+
+/* Modal */
+.modal{
+display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
+align-items:center;justify-content:center;padding:16px
+}
+.modal-box{
+width:100%;max-width:420px;background:var(--card);
+border:1px solid var(--line);border-radius:14px;padding:16px
+}
+
+.topbar{
+display:flex;gap:8px;align-items:center
+}
+.topbar input{
+flex:1;margin:0
+}
+.link-btn{
+background:#0F1A33;border:1px solid var(--line)
+}
+
 </style>
 </head>
 
@@ -37,49 +149,88 @@ pre{white-space:pre-wrap;color:#38bdf8;direction:ltr}
 
 <div class="container">
 
-<h2>🏛️ AI Report Pro</h2>
+<div class="header">
+<div class="brand">🏛️ AI Report Pro</div>
+<div class="topbar">
+<span class="badge" id="creditBadge">🪙 1</span>
+<button class="link-btn" onclick="openCode()">🔑 كود</button>
+</div>
+</div>
+
+<div class="progress"><div id="bar" class="bar"></div></div>
+
+<!-- LOGIN -->
+<div id="login" class="step active">
+<div class="card center">
+<h3>تسجيل دخول سريع</h3>
+<small>للاستخدام على نفس الجهاز (بدون تعقيد)</small>
+<input id="email" placeholder="البريد الإلكتروني">
+<button onclick="doLogin()">دخول</button>
+</div>
+</div>
 
 <!-- STEP 1 -->
-<div id="step1" class="step active">
-
+<div id="step1" class="step">
 <div class="card">
 <h3>📊 نوع التقرير</h3>
 
 <select id="type">
-<option>Monitoring & Evaluation</option>
-<option>Field Report</option>
-<option>Training Report</option>
-<option>Strategic Analysis</option>
-<option>Financial Report</option>
+<option>Monitoring & Evaluation (OECD/M&E)</option>
+<option>Field Visit Report</option>
+<option>Training Impact (Kirkpatrick)</option>
+<option>Strategic Review</option>
+<option>Financial Efficiency</option>
 <option>Humanitarian Report</option>
 </select>
 
-<p>🧠 وصف</p>
+<label>🧠 وصف ذكي</label>
+<small>مثال: زيارة ميدانية لمشروع مياه لتقييم جودة التنفيذ</small>
 <textarea id="smartDesc"></textarea>
 
-<button onclick="suggest()">✨ اقتراح</button>
+<button onclick="suggestType()">✨ اقتراح تلقائي</button>
 </div>
 
+<div class="nav">
 <button onclick="next(2)">التالي</button>
+</div>
 </div>
 
 <!-- STEP 2 -->
 <div id="step2" class="step">
 <div class="card">
+<h3>📁 البيانات الأساسية</h3>
 
-<h3>📁 البيانات</h3>
-
-<input id="project" placeholder="اسم المشروع">
-<input id="org" placeholder="الجهة">
-<input id="donor" placeholder="الممول">
-<input id="location" placeholder="الموقع">
-<input id="date" placeholder="التاريخ">
-<input id="beneficiaries" placeholder="عدد المستفيدين">
+<div class="grid-2">
+<div>
+<label>اسم المشروع</label>
+<input id="project">
+</div>
+<div>
+<label>الجهة المنفذة</label>
+<input id="org">
+</div>
+<div>
+<label>الممول</label>
+<input id="donor">
+</div>
+<div>
+<label>الموقع</label>
+<input id="location">
+</div>
+<div>
+<label>التاريخ</label>
+<input id="date">
+</div>
+<div>
+<label>عدد المستفيدين</label>
+<input id="beneficiaries">
+</div>
+</div>
 
 </div>
 
 <div class="nav">
-<button onclick="next(1)">رجوع</button>
+<button class="ghost" onclick="next(1)">رجوع</button>
 <button onclick="next(3)">التالي</button>
 </div>
 </div>
@@ -87,142 +238,265 @@ pre{white-space:pre-wrap;color:#38bdf8;direction:ltr}
 <!-- STEP 3 -->
 <div id="step3" class="step">
 <div class="card">
-
-<h3>🧠 التحليل</h3>
-
+<h3>🧠 التحليل (ديناميكي)</h3>
 <div id="questions"></div>
-
 </div>
 
 <div class="nav">
-<button onclick="next(2)">رجوع</button>
+<button class="ghost" onclick="next(2)">رجوع</button>
 <button onclick="generate()">🚀 توليد</button>
 </div>
 </div>
 
 <!-- RESULT -->
-<div id="result">
+<div id="result" class="step">
+<div class="card">
+<h3>📄 البرومبت الاحترافي</h3>
 <pre id="output"></pre>
 
-<button class="copy" onclick="copy()">📋 نسخ</button>
+<div class="actions">
+<button class="success" onclick="copy()">📋 نسخ</button>
 <button onclick="openGPT()">💬 ChatGPT</button>
 <button onclick="openGemini()">🤖 Gemini</button>
+</div>
 
 <div class="card">
 <h3>💰 الباقات</h3>
-<p>10 تقارير = 10$</p>
-<p>50 تقرير = 30$</p>
-<p>غير محدود = 50$</p>
+<div class="pricing">
+<div class="plan">
+<h4>Starter</h4>
+<div class="price">10$</div>
+<div>10 تقارير</div>
+</div>
+<div class="plan">
+<h4>Pro</h4>
+<div class="price">30$</div>
+<div>50 تقرير</div>
+</div>
+<div class="plan">
+<h4>Unlimited</h4>
+<div class="price">50$</div>
+<div>غير محدود</div>
+</div>
+</div>
+
+<button class="success" onclick="openWhats()">💬 اشحن عبر واتساب</button>
+</div>
+
+</div>
 </div>
 
 </div>
 
+<!-- CODE MODAL -->
+<div id="codeBox" class="modal">
+<div class="modal-box">
+<h3>🔑 إدخال كود</h3>
+<input id="codeInput" placeholder="أدخل الكود">
+<button onclick="checkCode()">تفعيل</button>
+<button class="ghost" onclick="closeCode()">إغلاق</button>
+</div>
 </div>
 
 <script>
 
-// التنقل
-function next(step){
+// ====== STATE ======
+let device = localStorage.getItem("dev_id");
+if(!device){
+device = "DEV-" + Math.random().toString(36).slice(2,9).toUpperCase();
+localStorage.setItem("dev_id", device);
+}
+let credits = localStorage.getItem("cr_"+device);
+credits = credits===null ? 1 : parseInt(credits);
+
+// ====== UI ======
+function updateCredits(){
+document.getElementById("creditBadge").innerText = "🪙 " + credits;
+}
+updateCredits();
+
+function show(id){
 document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
-document.getElementById("step"+step).classList.add("active");
-
-if(step==3) loadQuestions();
+document.getElementById(id).classList.add("active");
 }
 
-// اقتراح ذكي
-function suggest(){
-let t=document.getElementById("smartDesc").value;
-
-if(t.includes("زيارة")) set("type","Field Report");
-else if(t.includes("تقييم")) set("type","Monitoring & Evaluation");
-else if(t.includes("تدريب")) set("type","Training Report");
+function next(n){
+if(n===1){show('step1'); setBar(20)}
+if(n===2){show('step2'); setBar(45)}
+if(n===3){loadQuestions(); show('step3'); setBar(70)}
 }
 
-// الأسئلة
+function setBar(p){document.getElementById("bar").style.width = p+"%"}
+
+// ====== LOGIN ======
+function doLogin(){
+let email = document.getElementById("email").value;
+if(!email){alert("اكتب البريد"); return;}
+localStorage.setItem("user_email", email);
+show('step1'); setBar(20);
+}
+
+// ====== SMART SUGGEST ======
+function suggestType(){
+let t = (val("smartDesc")||"").toLowerCase();
+
+if(/زيارة|ميداني/.test(t)) set("type","Field Visit Report");
+else if(/تقييم|تحليل|أثر/.test(t)) set("type","Monitoring & Evaluation (OECD/M&E)");
+else if(/تدريب/.test(t)) set("type","Training Impact (Kirkpatrick)");
+else if(/مالي|تكلفة/.test(t)) set("type","Financial Efficiency");
+else if(/استراتيجي/.test(t)) set("type","Strategic Review");
+else if(/انساني|اغاث/.test(t)) set("type","Humanitarian Report");
+else alert("لم يتم التعرف، اختر يدوي");
+}
+
+// ====== QUESTIONS ======
 function loadQuestions(){
-let type=val("type");
-let html="";
+let type = val("type");
+let q = "";
 
-if(type=="Monitoring & Evaluation"){
-html=`
+if(type.includes("Monitoring")){
+q = `
 <label>🎯 الهدف</label>
-<small>مثال: تقييم أثر المشروع</small>
+<small>مثال: تقييم تحقيق الأهداف وفق مؤشرات KPI</small>
 <textarea id="objective"></textarea>
 
 <label>📊 النتائج</label>
+<small>مثال: تحسن 30% مع فجوات تشغيلية</small>
 <textarea id="findings"></textarea>
 
 <label>⚠️ التحديات</label>
+<small>مثال: ضعف التوريد / تأخر التنفيذ</small>
 <textarea id="challenges"></textarea>
 
 <label>💡 التوصيات</label>
+<small>مثال: إعادة جدولة + تحسين سلاسل الإمداد</small>
 <textarea id="recommendations"></textarea>
 `;
 }
+else if(type.includes("Field")){
+q = `
+<label>📍 الملاحظات الميدانية</label>
+<small>مثال: التزام جزئي بالمواصفات</small>
+<textarea id="findings"></textarea>
 
-else{
-html=`
-<label>🎯 الهدف</label>
+<label>🛠️ حالة التنفيذ</label>
 <textarea id="objective"></textarea>
 
-<label>📝 الملاحظات</label>
+<label>⚠️ المشاكل</label>
+<textarea id="challenges"></textarea>
+
+<label>💡 التحسينات</label>
+<textarea id="recommendations"></textarea>
+`;
+}
+else if(type.includes("Training")){
+q = `
+<label>🎯 هدف التدريب</label>
+<textarea id="objective"></textarea>
+
+<label>📈 الأثر (Kirkpatrick)</label>
 <textarea id="findings"></textarea>
 
 <label>⚠️ التحديات</label>
 <textarea id="challenges"></textarea>
 
+<label>💡 تحسين التدريب</label>
+<textarea id="recommendations"></textarea>
+`;
+}
+else{
+q = `
+<label>🎯 الهدف</label>
+<textarea id="objective"></textarea>
+<label>📝 النتائج</label>
+<textarea id="findings"></textarea>
+<label>⚠️ التحديات</label>
+<textarea id="challenges"></textarea>
 <label>💡 التوصيات</label>
 <textarea id="recommendations"></textarea>
 `;
 }
 
-document.getElementById("questions").innerHTML=html;
+document.getElementById("questions").innerHTML = q;
 }
 
-// توليد + قفل
+// ====== GENERATE + PAYWALL ======
 function generate(){
 
-let device=localStorage.getItem("dev_id")||Math.random();
-localStorage.setItem("dev_id",device);
-
-let credits=localStorage.getItem("cr_"+device);
-credits=credits?parseInt(credits):1;
-
 if(credits<=0){
-document.getElementById("result").style.display="block";
-document.getElementById("output").innerHTML="🚫 انتهى الرصيد - تواصل واتساب";
+show('result'); setBar(100);
+document.getElementById("output").innerHTML =
+"🚫 انتهى الرصيد\n\n💬 اشحن عبر واتساب للحصول على تقارير احترافية";
 return;
 }
 
 credits--;
-localStorage.setItem("cr_"+device,credits);
+localStorage.setItem("cr_"+device, credits);
+updateCredits();
 
-let p=`
-You are senior consultant.
+let p = `
+You are a Senior Monitoring & Evaluation Consultant.
 
-Generate professional NGO report.
+Write a HIGH-LEVEL PROFESSIONAL REPORT in Arabic.
 
+Use:
+- OECD DAC
+- M&E Framework
+- Evidence-based analysis
+
+INPUT:
 Project: ${val("project")}
 Organization: ${val("org")}
 Donor: ${val("donor")}
 Location: ${val("location")}
+Date: ${val("date")}
+Beneficiaries: ${val("beneficiaries")}
 
 Objective: ${val("objective")}
 Findings: ${val("findings")}
 Challenges: ${val("challenges")}
 Recommendations: ${val("recommendations")}
+
+OUTPUT:
+Executive Summary
+Background
+Methodology
+Findings (analytical)
+Challenges
+Recommendations
+Conclusion
 `;
 
-document.getElementById("output").innerText=p;
-document.getElementById("result").style.display="block";
+document.getElementById("output").innerText = p;
+show('result'); setBar(100);
 }
 
-// أدوات
-function val(id){return document.getElementById(id).value}
+// ====== ACTIONS ======
+function copy(){
+navigator.clipboard.writeText(document.getElementById("output").innerText);
+alert("تم النسخ");
+}
+function openGPT(){window.open("https://chat.openai.com","_blank")}
+function openGemini(){window.open("https://gemini.google.com","_blank")}
+function openWhats(){window.open("https://wa.me/967XXXXXXXXX","_blank")}
+
+// ====== CODE ======
+function openCode(){document.getElementById("codeBox").style.display="flex"}
+function closeCode(){document.getElementById("codeBox").style.display="none"}
+function checkCode(){
+let code = document.getElementById("codeInput").value;
+if(code==="VIP50"){ credits=50 }
+else if(code==="UNLIMITED"){ credits=9999 }
+else { alert("كود غير صحيح"); return; }
+localStorage.setItem("cr_"+device, credits);
+updateCredits();
+alert("تم التفعيل");
+closeCode();
+}
+
+// ====== HELPERS ======
+function val(id){return document.getElementById(id)?.value || ""}
 function set(id,v){document.getElementById(id).value=v}
-function copy(){navigator.clipboard.writeText(output.innerText);alert("تم")}
-function openGPT(){window.open("https://chat.openai.com")}
-function openGemini(){window.open("https://gemini.google.com")}
 
 </script>
 
